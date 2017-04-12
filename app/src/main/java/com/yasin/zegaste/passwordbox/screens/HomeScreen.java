@@ -109,7 +109,7 @@ public class HomeScreen extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
+    //masterdangelenlokalbrench
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -133,6 +133,6 @@ public class HomeScreen extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+
     }
-//masterdangelenlokalbrench
 }
