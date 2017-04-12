@@ -134,5 +134,5 @@ public class HomeScreen extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-//yasinremotebrench
+//yasinremotebrenchtenoluşturulanlokalbrench
 }
