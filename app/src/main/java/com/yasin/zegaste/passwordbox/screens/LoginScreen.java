@@ -21,7 +21,7 @@ import android.widget.EditText;
 
 import com.yasin.zegaste.passwordbox.passwordbox.R;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordCategory;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProduct;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProductOwner;
 
@@ -37,7 +37,7 @@ public class LoginScreen extends AppCompatActivity  {
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    private PasswordController passwordController;
+    private PasswordDataStructure PasswordDataStructure;
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -61,20 +61,20 @@ public class LoginScreen extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_screen);
-        passwordController = (PasswordController) getIntent().getSerializableExtra("passwordController");
+        PasswordDataStructure = (PasswordDataStructure) getIntent().getSerializableExtra("PasswordDataStructure");
         final EditText passwordEntered = (EditText) findViewById(R.id.etPasswordLogIn);
         Button btnLogIn = (Button) findViewById(R.id.btn_LogIn);
         btnLogIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean passwordCorrect = checkEnteredPassword(passwordEntered.getText().toString(),passwordController);
+                boolean passwordCorrect = checkEnteredPassword(passwordEntered.getText().toString(),PasswordDataStructure);
                 if(!passwordCorrect){
                     showPasswordIncorrectMessage(view);
                     passwordEntered.setText("");
                     return;
                 }
                 Intent ıntent1 = new Intent(LoginScreen.this,HomeScreen.class);
-                ıntent1.putExtra("passwordController", passwordController);
+                ıntent1.putExtra("PasswordDataStructure", PasswordDataStructure);
                 startActivity(ıntent1);
                 finish();
             }
@@ -84,8 +84,8 @@ public class LoginScreen extends AppCompatActivity  {
                         .setAction("Action", null).show();
             }
 
-            private boolean checkEnteredPassword(String s, PasswordController passwordController) {
-                return (passwordController.getIdIdentitiyCard().checkPasswordIsCorrect(s));
+            private boolean checkEnteredPassword(String s, PasswordDataStructure PasswordDataStructure) {
+                return (PasswordDataStructure.getIdIdentitiyCard().checkPasswordIsCorrect(s));
             }
         });
         // Set up the login form.
@@ -225,7 +225,7 @@ public class LoginScreen extends AppCompatActivity  {
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginScreen.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-        for(PasswordCategory s : passwordController.getCategories())
+        for(PasswordCategory s : PasswordDataStructure.getCategories())
                 for(PasswordProductOwner passwordProductOwner : s.getPasswordProductOwners())
                 for(PasswordProduct passwordProduct : passwordProductOwner.getPasswordProducts())
                 emailAddressCollection.add(passwordProduct.getName()+passwordProduct.getData1()+passwordProduct.getData2());

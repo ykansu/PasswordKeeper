@@ -1,9 +1,9 @@
-package com.yasin.zegaste.passwordbox.Common;
+package com.yasin.zegaste.passwordbox.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.io.Serializable;
  */
 
 public class SaveAndRestoreUtil {
+    public static String savePasswordDataStructureKey = "PasswordDataStructure";
 
     public static void saveObjectToLocal(Serializable objectToSave, Context context, String saveString) throws IOException {
 
@@ -37,7 +38,7 @@ public class SaveAndRestoreUtil {
         SharedPreferences sharedPref = context.getSharedPreferences("passwordbox", Context.MODE_PRIVATE);
         String retrivalString = sharedPref.getString(saveString, null);
         if (retrivalString != null)
-            return (PasswordController) fromString(retrivalString);
+            return (PasswordDataStructure) fromString(retrivalString);
         else throw new NullPointerException("String null alındı");
     }
 

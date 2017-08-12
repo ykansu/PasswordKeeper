@@ -13,11 +13,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.yasin.zegaste.passwordbox.Common.SaveAndRestoreUtil;
+import com.yasin.zegaste.passwordbox.common.SaveAndRestoreUtil;
 import com.yasin.zegaste.passwordbox.passwordbox.R;
 import com.yasin.zegaste.passwordbox.passwordentities.IdentitiyCard;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordCategory;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordFirstDataType;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProduct;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProductOwner;
@@ -35,7 +35,7 @@ public class SingUpScreen extends AppCompatActivity {
             actionBar.setTitle("Şifrenizi Belirleyin");
         }
         Intent ıntent = getIntent();
-        final PasswordController passwordController = (PasswordController) ıntent.getSerializableExtra("passwordController");
+        final PasswordDataStructure PasswordDataStructure = (PasswordDataStructure) ıntent.getSerializableExtra("PasswordDataStructure");
         final EditText password = (EditText) findViewById(R.id.editText);
         final EditText password_Check = (EditText) findViewById(R.id.editText2);
         Button createAppPassword  = (Button)findViewById(R.id.btnCreateAppPassword);
@@ -52,14 +52,14 @@ public class SingUpScreen extends AppCompatActivity {
 
             private void startNextActivity(Class<?> cls) {
                 Intent ıntent1 = new Intent(SingUpScreen.this,cls);
-                ıntent1.putExtra("passwordController", passwordController);
+                ıntent1.putExtra("PasswordDataStructure", PasswordDataStructure);
                 startActivity(ıntent1);
                 finish();
             }
 
             private void saveController() {
                 try {
-                    SaveAndRestoreUtil.saveObjectToLocal(passwordController,SingUpScreen.this,"passwordController");
+                    SaveAndRestoreUtil.saveObjectToLocal(PasswordDataStructure,SingUpScreen.this,"PasswordDataStructure");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -79,15 +79,15 @@ public class SingUpScreen extends AppCompatActivity {
                         .setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                passwordController.setIdIdentitiyCard(initUserIdentityCard(userPassword));
+                                PasswordDataStructure.setIdIdentitiyCard(initUserIdentityCard(userPassword));
                                 if(addExamplesSelected())
-                                    addExamples(passwordController);
+                                    addExamples(PasswordDataStructure);
                                 saveController();
                                 dialogInterface.dismiss();
                                 startNextActivity(HomeScreen.class);
                             }
 
-                            private void addExamples(PasswordController passwordController) {
+                            private void addExamples(PasswordDataStructure PasswordDataStructure) {
                                 PasswordCategory epostaPasswordCategory = new PasswordCategory("e-posta");
                                 PasswordCategory bankaPasswordCategory = new PasswordCategory("banka");
                                 PasswordCategory oyunPasswordCategory = new PasswordCategory("oyun");
@@ -127,22 +127,22 @@ public class SingUpScreen extends AppCompatActivity {
                                 lolPasswordProduct2.setData1("2.gamecholic38", PasswordFirstDataType.USERNAME);
                                 lolPasswordProduct2.setData2("1234567");
 
-                                passwordController.add(oyunPasswordCategory, lolPasswordProductOwner, lolPasswordProduct);
-                                passwordController.addPassWordProduct(lolPasswordProduct2);
+                                PasswordDataStructure.add(oyunPasswordCategory, lolPasswordProductOwner, lolPasswordProduct);
+                                PasswordDataStructure.addPassWordProduct(lolPasswordProduct2);
 
-                                passwordController.addPasswordCategory(epostaPasswordCategory);
-                                passwordController.addPasswordCategory(bankaPasswordCategory);
+                                PasswordDataStructure.addPasswordCategory(epostaPasswordCategory);
+                                PasswordDataStructure.addPasswordCategory(bankaPasswordCategory);
 
-                                passwordController.addPassWordProductOwner(gmailPasswordProductOwner);
-                                passwordController.addPassWordProductOwner(outlookPasswordProductOwner);
-                                passwordController.addPassWordProductOwner(finansPasswordProductOwner);
-                                passwordController.addPassWordProductOwner(yapıkrediPasswordProductOwner);
+                                PasswordDataStructure.addPassWordProductOwner(gmailPasswordProductOwner);
+                                PasswordDataStructure.addPassWordProductOwner(outlookPasswordProductOwner);
+                                PasswordDataStructure.addPassWordProductOwner(finansPasswordProductOwner);
+                                PasswordDataStructure.addPassWordProductOwner(yapıkrediPasswordProductOwner);
 
-                                passwordController.addPassWordProduct(gmailPasswordProduct);
-                                passwordController.addPassWordProduct(outlookPasswordProduct);
-                                passwordController.addPassWordProduct(finansbakPasswordProduct);
-                                passwordController.addPassWordProduct(finansbakPasswordProduct2);
-                                passwordController.addPassWordProduct(finansbakPasswordProduct3);
+                                PasswordDataStructure.addPassWordProduct(gmailPasswordProduct);
+                                PasswordDataStructure.addPassWordProduct(outlookPasswordProduct);
+                                PasswordDataStructure.addPassWordProduct(finansbakPasswordProduct);
+                                PasswordDataStructure.addPassWordProduct(finansbakPasswordProduct2);
+                                PasswordDataStructure.addPassWordProduct(finansbakPasswordProduct3);
                             }
 
                             private boolean addExamplesSelected() {

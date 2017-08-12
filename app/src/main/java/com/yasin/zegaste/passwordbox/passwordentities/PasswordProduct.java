@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * This class stands for the model of real passwords.
  * Created by Yasin on 12.11.2016.
  */
 
@@ -74,11 +75,16 @@ public class PasswordProduct implements Serializable {
 
     public void setData1(String data1, PasswordFirstDataType passwordFirstDataType) {
         this.passwordFirstDataType = passwordFirstDataType;
-        if (passwordFirstDataType.equals(PasswordFirstDataType.E_MAIL))
-            if (checkDataIfSatisfiesEmailRegex(data1))
+        if(!passwordFirstDataType.equals(PasswordFirstDataType.NOTNECESSARY)) {
+            if (passwordFirstDataType.equals(PasswordFirstDataType.E_MAIL)) {
+                if (checkDataIfSatisfiesEmailRegex(data1))
+                    this.data1 = data1;
+                else
+                    throw new NullPointerException("Data1 is not a e-mail adress");
+            } else if(passwordFirstDataType.equals(PasswordFirstDataType.USERNAME)) {
                 this.data1 = data1;
-            else
-                throw new NullPointerException("Data1 is not a e-mail adress");
+            }
+        }
     }
 
     private boolean checkDataIfSatisfiesEmailRegex(String data1) {

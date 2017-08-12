@@ -7,25 +7,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * This class has full control of model classes.
+ * This class organizes all structure of data stored from the base and allows view class to
+ * show information to user. User changes also handled by this class.
+ * This class saved as data model.
  * Created by Yasin on 12.11.2016.
  */
-public class PasswordController implements Serializable {
+public class PasswordDataStructure implements Serializable {
 
-    private static PasswordController ourInstance = new PasswordController();
+    private static PasswordDataStructure ourInstance = new PasswordDataStructure();
     Map<String, PasswordProduct> passwordProductMap;
     Map<String, PasswordProductOwner> passwordProductOwnerMap;
     Map<String, PasswordCategory> passwordCategoryMap;
     IdentitiyCard idIdentitiyCard;
     List<PasswordCategory> categories;
 
-    private PasswordController() {
+    private PasswordDataStructure() {
         passwordCategoryMap = new HashMap<>();
         passwordProductMap = new HashMap<>();
         passwordProductOwnerMap = new HashMap<>();
         categories = new ArrayList<>();
     }
 
-    public static PasswordController getInstance() {
+    public static PasswordDataStructure getInstance() {
         return ourInstance;
     }
 
@@ -46,6 +50,7 @@ public class PasswordController implements Serializable {
     }
 
     public boolean removePasswordCategory(PasswordCategory passwordCategory) {
+        //todo: if threre are password owners under this category, user warning should be shown.
         if (passwordCategoryMap.containsKey(passwordCategory.getEid())) {
             passwordCategoryMap.remove(passwordCategory.getEid());
             if (categories.contains(passwordCategory)) {
@@ -58,6 +63,7 @@ public class PasswordController implements Serializable {
     }
 
     public boolean removePassWordProductOwner(PasswordProductOwner passwordProductOwner) {
+        //todo: if there are password products under this owner, user warning should be shown.
         if (passwordProductOwnerMap.containsKey(passwordProductOwner.getEid())) {
             passwordProductOwnerMap.remove(passwordProductOwner.getPassWordCategoryEid());
             passwordCategoryMap.get(passwordProductOwner.getPassWordCategoryEid()).getPasswordProductOwners()
@@ -94,7 +100,7 @@ public class PasswordController implements Serializable {
         if (passwordCategoryMap.containsKey(passwordProductOwner.getPassWordCategoryEid())) {
             List categoryProductOwners = passwordCategoryMap.get(passwordProductOwner.getPassWordCategoryEid())
                     .getPasswordProductOwners();
-            if (categoryProductOwners.contains(passwordProductOwner.getEid()))
+            if (categoryProductOwners.contains(passwordProductOwner.getEid()) && passwordProductOwnerMap.containsKey(passwordProductOwner.getEid()))
                 return;
             passwordProductOwnerMap.put(passwordProductOwner.getEid(), passwordProductOwner);
             categoryProductOwners.add(passwordProductOwner);
