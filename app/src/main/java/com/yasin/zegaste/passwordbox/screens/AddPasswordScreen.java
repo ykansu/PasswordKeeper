@@ -12,10 +12,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
-import com.yasin.zegaste.passwordbox.Common.SaveAndRestoreUtil;
+import com.yasin.zegaste.passwordbox.common.SaveAndRestoreUtil;
 import com.yasin.zegaste.passwordbox.passwordbox.R;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordCategory;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordFirstDataType;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProduct;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProductOwner;
@@ -34,24 +34,24 @@ public class AddPasswordScreen extends AppCompatActivity {
     RadioButton rb_OnlyPassword;
     AutoCompleteTextView passwordData1;
     EditText passwordData2;
-    private PasswordController passwordController;
+    private PasswordDataStructure PasswordDataStructure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_password_screen);
-        passwordController = (PasswordController) getIntent().getSerializableExtra("passwordController");
+        PasswordDataStructure = (PasswordDataStructure) getIntent().getSerializableExtra("PasswordDataStructure");
 
         rb_Email = (RadioButton) findViewById(R.id.addPasswordRb_Email);
         rb_Username = (RadioButton) findViewById(R.id.addPasswordRb_Username);
         rb_OnlyPassword = (RadioButton) findViewById(R.id.addPasswordRb_OnlyPassword);
 
         passwordCategory = (AutoCompleteTextView) findViewById(R.id.addPasswordTv_Category);
-        final ArrayList<String> listCategories = new ArrayList<>();
-        for (PasswordCategory passwordCategory : passwordController.getCategories()) {
-            listCategories.add(passwordCategory.getName());
+        final ArrayList<String> categoryNames = new ArrayList<>();
+        for (PasswordCategory passwordCategory : PasswordDataStructure.getCategories()) {
+            categoryNames.add(passwordCategory.getName());
         }
-        ArrayAdapter<String> adapterForCategories = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listCategories);
+        ArrayAdapter<String> adapterForCategories = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categoryNames);
         passwordCategory.setAdapter(adapterForCategories);
 
         final ArrayList<String> listOwners = new ArrayList<>();
@@ -63,8 +63,8 @@ public class AddPasswordScreen extends AppCompatActivity {
                 if (passwordCategory.getText().equals("")) return;
                 PasswordCategory category = null;
                 String categoryName = passwordCategory.getText().toString().toUpperCase();
-                if (listCategories.contains(categoryName)) {
-                    for (PasswordCategory category1 : passwordController.getCategories())
+                if (categoryNames.contains(categoryName)) {
+                    for (PasswordCategory category1 : PasswordDataStructure.getCategories())
                         if (category1.getName().equalsIgnoreCase(categoryName))
                             category = category1;
                     for (PasswordProductOwner owner : category.getPasswordProductOwners()) {
@@ -73,7 +73,7 @@ public class AddPasswordScreen extends AppCompatActivity {
                     }
                     productOwner.setAdapter(new ArrayAdapter<String>(AddPasswordScreen.this, android.R.layout.simple_list_item_1, listOwners));
                 } else {
-                    for (PasswordCategory category1 : passwordController.getCategories()) {
+                    for (PasswordCategory category1 : PasswordDataStructure.getCategories()) {
                         for (PasswordProductOwner owner : category1.getPasswordProductOwners())
                             if (!listOwners.contains(owner.getName()))
                                 listOwners.add(owner.getName());
@@ -117,7 +117,7 @@ public class AddPasswordScreen extends AppCompatActivity {
 
     private void setPasswordData1AdapterAsUserNames(PasswordFirstDataType type) {
         List<String> list = new ArrayList<>();
-        for (PasswordCategory category : passwordController.getCategories()) {
+        for (PasswordCategory category : PasswordDataStructure.getCategories()) {
             for (PasswordProductOwner owner : category.getPasswordProductOwners()) {
                 for (PasswordProduct product : owner.getPasswordProducts()) {
                     if (product.getPasswordFirstDataType().equals(type))
@@ -148,21 +148,23 @@ public class AddPasswordScreen extends AppCompatActivity {
     private void addPasswordProduct() {
         if (!checkFields())
             return;
-        PasswordCategory category = new PasswordCategory(passwordCategory.getText().toString());
-        PasswordProductOwner owner = new PasswordProductOwner(productOwner.getText().toString(), category.getEid());
-        passwordProduct = new PasswordProduct(passwordName.getText().toString(), owner.getEid());
+        PasswordCategory category = new PasswordCategory(passwordCategory.getText().toString().toUpperCase());
+        PasswordProductOwner owner = new PasswordProductOwner(productOwner.getText().toString().toUpperCase(), category.getEid());
+        passwordProduct = new PasswordProduct(passwordName.getText().toString().toUpperCase(), owner.getEid());
         setPasswordDataTypeFromRadioButtons();
         if (!passwordProduct.getPasswordFirstDataType().equals(PasswordFirstDataType.NOTNECESSARY))
             passwordProduct.setData1(passwordData1.getText().toString(), passwordProduct.getPasswordFirstDataType());
         passwordProduct.setData2(passwordData2.getText().toString());
-        passwordController.add(category, owner, passwordProduct);
+        PasswordDataStructure.add(category, owner, passwordProduct);
         saveController();
+        createToastMessage("Yeni Şifre Başarılı Olarak Kaydedildi !");
+        onBackPressed();
     }
 
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(AddPasswordScreen.this, HomeScreen.class);
-        intent.putExtra("passwordController", passwordController);
+        intent.putExtra("PasswordDataStructure", PasswordDataStructure);
         startActivity(intent);
         finish();
     }
@@ -180,7 +182,7 @@ public class AddPasswordScreen extends AppCompatActivity {
             createToastMessage("Şifre Adı boş bırakılamaz !");
             return false;
         }
-        if (passwordData1.getText().toString().equals("") && passwordProduct.getPasswordFirstDataType().equals(PasswordFirstDataType.NOTNECESSARY)) {
+        if (passwordData1.getText().equals("") && !passwordProduct.getPasswordFirstDataType().equals(PasswordFirstDataType.NOTNECESSARY)) {
             createToastMessage(passwordProduct.getPasswordFirstDataType().equals(PasswordFirstDataType.E_MAIL) ? "E-Mail" : "Kullanıcı Adı" +
                     " alanı boş bırakılamaz !");
             return false;
@@ -203,7 +205,7 @@ public class AddPasswordScreen extends AppCompatActivity {
 
     private void saveController() {
         try {
-            SaveAndRestoreUtil.saveObjectToLocal(passwordController, AddPasswordScreen.this, "passwordController");
+            SaveAndRestoreUtil.saveObjectToLocal(PasswordDataStructure, AddPasswordScreen.this, SaveAndRestoreUtil.savePasswordDataStructureKey);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
+ * This class stands for the model of password's creation place.
+ * For Example (Category-PasswordOwner): (Bank-Ziraat Bank), (Game-League of Legends)
  * Created by Yasin on 12.11.2016.
  */
 

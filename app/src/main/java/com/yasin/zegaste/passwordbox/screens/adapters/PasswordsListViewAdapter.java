@@ -1,4 +1,4 @@
-package com.yasin.zegaste.passwordbox.screens.Adapters;
+package com.yasin.zegaste.passwordbox.screens.adapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,10 +12,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.yasin.zegaste.passwordbox.Common.SaveAndRestoreUtil;
+import com.yasin.zegaste.passwordbox.common.SaveAndRestoreUtil;
 import com.yasin.zegaste.passwordbox.passwordbox.R;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordCategory;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordFirstDataType;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProduct;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProductOwner;
@@ -30,18 +30,18 @@ import java.util.List;
 
 public class PasswordsListViewAdapter extends BaseAdapter {
 
-    PasswordController passwordController;
+    PasswordDataStructure PasswordDataStructure;
     Context context;
     int layoutResourceId;
     List data = null;
     LayoutInflater layoutInflater;
 
-    public PasswordsListViewAdapter(Activity context, int resource, List<PasswordProduct> data, PasswordController passwordController) {
+    public PasswordsListViewAdapter(Activity context, int resource, List<PasswordProduct> data, PasswordDataStructure PasswordDataStructure) {
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.context = context;
         this.layoutResourceId = resource;
         this.data = data;
-        this.passwordController = passwordController;
+        this.PasswordDataStructure = PasswordDataStructure;
     }
 
     @Override
@@ -96,9 +96,9 @@ public class PasswordsListViewAdapter extends BaseAdapter {
         PasswordProduct passwordProduct = (PasswordProduct) data.get(position);
         holder.tvPasswordProductName.setText(passwordProduct.getName());
         String categoryName = "", ownerName = "";
-        PasswordProductOwner passwordProductOwner = passwordController.getPasswordProductOwner(passwordProduct.getPassWordProductOwnerEid());
+        PasswordProductOwner passwordProductOwner = PasswordDataStructure.getPasswordProductOwner(passwordProduct.getPassWordProductOwnerEid());
         ownerName = passwordProductOwner.getName();
-        PasswordCategory category = passwordController.getPasswordCategory(passwordProductOwner.getPassWordCategoryEid());
+        PasswordCategory category = PasswordDataStructure.getPasswordCategory(passwordProductOwner.getPassWordCategoryEid());
         categoryName = category.getName();
         holder.tvPasswordProductCategoryAndOwner.setText(categoryName + "\n" + ownerName);
         Date date = passwordProduct.getCreationDate();
@@ -129,8 +129,8 @@ public class PasswordsListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 PasswordProduct passwordProduct = (PasswordProduct) data.get(position);
-                passwordController.removePassWordProduct(passwordProduct);
-                savePasswordController();
+                PasswordDataStructure.removePassWordProduct(passwordProduct);
+                savePasswordDataStructure();
                 data.remove(passwordProduct);
                 PasswordsListViewAdapter.this.notifyDataSetChanged();
 
@@ -147,14 +147,14 @@ public class PasswordsListViewAdapter extends BaseAdapter {
 
     private void editPaswordProduct(int position) {
         PasswordProduct passwordProduct = (PasswordProduct) data.get(position);
-        //TODO: edit password product with passwordController
-        savePasswordController();
+        //TODO: edit password product with PasswordDataStructure
+        savePasswordDataStructure();
         this.notifyDataSetChanged();
     }
 
-    private void savePasswordController() {
+    private void savePasswordDataStructure() {
         try {
-            SaveAndRestoreUtil.saveObjectToLocal(passwordController, context, "passwordController");
+            SaveAndRestoreUtil.saveObjectToLocal(PasswordDataStructure, context, SaveAndRestoreUtil.savePasswordDataStructureKey);
         } catch (IOException e) {
             e.printStackTrace();
         }

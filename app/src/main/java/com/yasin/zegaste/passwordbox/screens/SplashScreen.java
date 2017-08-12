@@ -6,13 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
-import com.yasin.zegaste.passwordbox.Common.SaveAndRestoreUtil;
+import com.yasin.zegaste.passwordbox.common.SaveAndRestoreUtil;
 import com.yasin.zegaste.passwordbox.passwordbox.R;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordCategory;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordFirstDataType;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordProduct;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordProductOwner;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 
 import java.io.IOException;
 
@@ -24,17 +20,20 @@ public class SplashScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        setTheme(R.style.FullscreenTheme);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_splash_screen);
 
-        hide();
+        hideActionBar();
+
         StartAppAsyncClass startAppAsyncClass = new StartAppAsyncClass();
         startAppAsyncClass.execute();
 
     }
 
-    private void hide() {
+    private void hideActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -43,28 +42,28 @@ public class SplashScreen extends AppCompatActivity {
 
     private class StartAppAsyncClass extends AsyncTask<Void, Void, Void> {
 
-        PasswordController passwordController ;
+        PasswordDataStructure PasswordDataStructure ;
         boolean firstLogin = false;
 
         @Override
         protected Void doInBackground(Void... voids) {
-            freezeScreenforMillis(1500);
             firstLogin = getIfFirstLogin();
+            //freezeScreenforMillis(1500);
             if (firstLogin) {
-                passwordController = PasswordController.getInstance();
+                PasswordDataStructure = PasswordDataStructure.getInstance();
                 startNextActivity(SingUpScreen.class);
             } else {
-                restorePassWordController();
+                restorePasswordDataStructure();
                 startNextActivity(LoginScreen.class);
             }
 
             return null;
         }
 
-        private void restorePassWordController() {
+        private void restorePasswordDataStructure() {
 
             try {
-                passwordController = (PasswordController) SaveAndRestoreUtil.restoreObjectFromLocal(SplashScreen.this, "passwordController");
+                PasswordDataStructure = (PasswordDataStructure) SaveAndRestoreUtil.restoreObjectFromLocal(SplashScreen.this, SaveAndRestoreUtil.savePasswordDataStructureKey);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -73,7 +72,7 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         private boolean getIfFirstLogin() {
-            return !SaveAndRestoreUtil.isObjectSavedWithThisString(SplashScreen.this, "passwordController");
+            return !SaveAndRestoreUtil.isObjectSavedWithThisString(SplashScreen.this, SaveAndRestoreUtil.savePasswordDataStructureKey);
         }
 
         private void freezeScreenforMillis(int millis) {
@@ -86,7 +85,7 @@ public class SplashScreen extends AppCompatActivity {
 
         private void startNextActivity(Class<?> cls) {
             Intent ıntent = new Intent(SplashScreen.this, cls);
-            ıntent.putExtra("passwordController", passwordController);
+            ıntent.putExtra("PasswordDataStructure", PasswordDataStructure);
             startActivity(ıntent);
             finish();
         }

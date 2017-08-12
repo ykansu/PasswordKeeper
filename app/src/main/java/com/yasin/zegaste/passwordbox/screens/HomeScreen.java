@@ -14,23 +14,23 @@ import android.view.View;
 import android.widget.ListView;
 import com.yasin.zegaste.passwordbox.passwordbox.R;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordCategory;
-import com.yasin.zegaste.passwordbox.passwordentities.PasswordController;
+import com.yasin.zegaste.passwordbox.passwordentities.PasswordDataStructure;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProduct;
 import com.yasin.zegaste.passwordbox.passwordentities.PasswordProductOwner;
-import com.yasin.zegaste.passwordbox.screens.Adapters.PasswordsListViewAdapter;
+import com.yasin.zegaste.passwordbox.screens.adapters.PasswordsListViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeScreen extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private PasswordController passwordController;
+    private PasswordDataStructure PasswordDataStructure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
-        passwordController = (PasswordController) getIntent().getSerializableExtra("passwordController");
+        PasswordDataStructure = (PasswordDataStructure) getIntent().getSerializableExtra("PasswordDataStructure");
         ListView passwordsListView = (ListView) findViewById(R.id.listviewPasswords);
         setPasswordsListViewAdapter(passwordsListView);
 
@@ -58,7 +58,7 @@ public class HomeScreen extends AppCompatActivity
 
     private void setPasswordsListViewAdapter(ListView passwordsListView) {
         List pass = new ArrayList<>();
-        for (PasswordCategory category : passwordController.getCategories()) {
+        for (PasswordCategory category : PasswordDataStructure.getCategories()) {
             for (PasswordProductOwner passwordProductOwner : category.getPasswordProductOwners()) {
                 for (PasswordProduct passwordProduct : passwordProductOwner.getPasswordProducts())
                     /*pass.add(passwordProduct.getName()+"/"+passwordProduct.getData1()+"/"+passwordProduct
@@ -67,7 +67,7 @@ public class HomeScreen extends AppCompatActivity
             }
 
         }
-        PasswordsListViewAdapter adapter = new PasswordsListViewAdapter(this, R.layout.layout_passwordlistview, pass, passwordController);
+        PasswordsListViewAdapter adapter = new PasswordsListViewAdapter(this, R.layout.layout_passwordlistview, pass, PasswordDataStructure);
         passwordsListView.setAdapter(adapter);
     }
 
@@ -80,7 +80,7 @@ public class HomeScreen extends AppCompatActivity
 
     private void showUserAddNewPasswordScreen() {
         Intent intent = new Intent(HomeScreen.this, AddPasswordScreen.class);
-        intent.putExtra("passwordController", passwordController);
+        intent.putExtra("PasswordDataStructure", PasswordDataStructure);
         startActivity(intent);
         finish();
     }
@@ -133,6 +133,5 @@ public class HomeScreen extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-
     }
 }

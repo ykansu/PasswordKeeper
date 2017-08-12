@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
+ * This class stands for the model of password categories user could add to app.
+ * For Example:Bank,Game,Application, Web Page vs.
  * Created by Yasin on 12.11.2016.
  */
 

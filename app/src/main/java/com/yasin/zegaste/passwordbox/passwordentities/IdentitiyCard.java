@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
+ * This class stands for the model of user's information
  * Created by Yasin on 12.11.2016.
  */
 
